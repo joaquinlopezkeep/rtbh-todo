@@ -99,4 +99,22 @@ class TaskApiTest extends TestCase
         $this->assertNotEquals($data['title'], $updatedTask->description);
     }
 
+    public function test_delete_task_with_valid_id()
+    {
+        $task = Task::factory()->create();
+        $task_id = $task->id;
+        $response = $this->delete("/api/v1/tasks/{$task_id}");
+        $response->assertStatus(200);
+        $this->assertDatabaseMissing('tasks', ['id' => $task_id]);
+    }
+
+    public function test_delete_task_with_invalid_id()
+    {
+        $task = Task::factory()->create();
+        $task_id = $task->id + 100;
+        $response = $this->delete("/api/v1/tasks/{$task_id}");
+        $response->assertStatus(404);
+        $this->assertDatabaseHas('tasks', ['id' => $task->id]);
+    }
+
 }

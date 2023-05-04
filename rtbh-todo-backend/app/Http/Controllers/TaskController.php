@@ -49,7 +49,7 @@ class TaskController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified task in storage.
      */
     public function update(Request $request, string $id)
     {
@@ -78,10 +78,16 @@ class TaskController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified task from storage.
      */
-    public function destroy(Task $task)
+    public function destroy(string $id)
     {
-        //
+        try{
+            return Task::findOrFail($id)->delete();
+        }
+        catch(ModelNotFoundException $e)
+        {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
     }
 }
