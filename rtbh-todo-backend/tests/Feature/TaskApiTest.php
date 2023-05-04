@@ -27,7 +27,8 @@ class TaskApiTest extends TestCase
         $this->assertDatabaseHas('tasks', $data);
     }
 
-    public function test_store_task_with_invalid_payload(){
+    public function test_store_task_with_invalid_payload()
+    {
         $data = [
             'bad_field' => 'Task 1',
         ];
@@ -36,6 +37,25 @@ class TaskApiTest extends TestCase
                 ->assertExactJson([
                     'message' => 'The description field is required.'
                 ]);
+    }
+
+    public function test_get_specific_task_with_valid_id()
+    {
+        $task = Task::factory()->create();
+        $task_id = $task->id;
+        $response = $this->get("/api/v1/tasks/{$task_id}");
+        $response->assertStatus(200)
+                ->assertJson([
+                    'id' => $task_id
+                ]);
+    }
+
+    public function test_get_specific_task_with_invalid_id()
+    {
+        $task = Task::factory()->create();
+        $task_id = $task->id  + 100;
+        $response = $this->get("/api/v1/tasks/{$task_id}");
+        $response->assertStatus(404);
     }
 
 }

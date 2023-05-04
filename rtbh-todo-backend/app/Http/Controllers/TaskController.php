@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Exception;
 
 class TaskController extends Controller
@@ -34,11 +35,17 @@ class TaskController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified task.
      */
-    public function show(Task $task)
+    public function show(string $id)
     {
-        //
+        try{
+            return Task::findOrFail($id);
+        }
+        catch(ModelNotFoundException $e)
+        {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
     }
 
     /**
