@@ -51,9 +51,30 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Task $task)
+    public function update(Request $request, string $id)
     {
-        //
+        try{
+            if ($request->has('description') && $request->has('is_complete')) {
+                $is_complete = $request->is_complete;
+                if (is_bool($is_complete) || ($is_complete === '0' || $is_complete === '1')) {
+                    $task = Task::findOrFail($id);
+                    $task->description = $request->description;
+                    $task->is_complete = (bool) $is_complete;
+                    $task->save();
+                } else {
+                    throw new Exception('The is_complete field must be true or false or 1 or 0.');
+                }
+            } else {
+                throw new Exception('The description and is_complete fields are required.');
+            }
+        }
+        catch(ModelNotFoundException $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+        catch(Exception $e)
+        {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     /**

@@ -58,4 +58,45 @@ class TaskApiTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function test_update_task_with_valid_id()
+    {
+        $data = [
+            'description' => 'A patched title',
+            'is_complete' => true
+        ];
+        $task = Task::factory()->create();
+        $task_id = $task->id;
+        $response = $this->patch("/api/v1/tasks/{$task_id}", $data);
+        $response->assertStatus(200);
+        $updatedTask = Task::find($task_id);
+        $this->assertEquals($data['description'], $updatedTask->description);
+        $this->assertEquals($data['is_complete'], $updatedTask->is_complete);
+    }
+
+    public function test_update_task_with_invalid_id()
+    {
+        $data = [
+            'description' => 'This should fail',
+            'is_complete' => true
+        ];
+        $task = Task::factory()->create();
+        $task_id = $task->id  + 100;
+        $response = $this->patch("/api/v1/tasks/{$task_id}", $data);
+        $response->assertStatus(404);
+    }
+
+    public function test_update_task_with_invalid_payload()
+    {
+        $data = [
+            'title' => 'This change should fail',
+            'is_complete' => true
+        ];
+        $task = Task::factory()->create();
+        $task_id = $task->id;
+        $response = $this->patch("/api/v1/tasks/{$task_id}", $data);
+        $response->assertStatus(400);
+        $updatedTask = Task::find($task_id);
+        $this->assertNotEquals($data['title'], $updatedTask->description);
+    }
+
 }

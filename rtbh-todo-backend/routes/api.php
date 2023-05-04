@@ -18,6 +18,7 @@ Route::prefix('v1/tasks')->group(function (){
     Route::get('', [TaskController::class, 'index']);
     Route::post('', [TaskController::class, 'store']);
     Route::get('/{id}', [TaskController::class, 'show']);
+    Route::patch('/{id}', [TaskController::class, 'update']);
 });
 
 
