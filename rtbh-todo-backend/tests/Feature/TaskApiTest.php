@@ -8,13 +8,10 @@ use Tests\TestCase;
 
 class TaskApiTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
 
+    public function test_get_all_tasks(): void
+    {
+        $response = $this->get('/api/v1/tasks');
         $response->assertStatus(200);
     }
 }
