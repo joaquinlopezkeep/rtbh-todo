@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class TaskApiTest extends TestCase
 {
-    use RefreshDatabase;
+    // use RefreshDatabase;
 
     public function test_get_all_tasks_status()
     {
@@ -116,5 +116,34 @@ class TaskApiTest extends TestCase
         $response->assertStatus(404);
         $this->assertDatabaseHas('tasks', ['id' => $task->id]);
     }
+
+    public function test_get_all_complete_tasks(){
+        $tasks = Task::factory()->count(10)->state(function (array $attributes){
+            return [
+                'is_complete' => true
+            ];
+        })->create();
+        $response = $this->get('/api/v1/tasks/complete');
+        $response->assertStatus(200);
+        $data = $response->json();
+        foreach ($data['data'] as $task) {
+            $this->assertTrue($task['is_complete']);
+        }
+    }
+
+    public function test_get_all_incomplete_tasks(){
+        $tasks = Task::factory()->count(10)->state(function (array $attributes){
+            return [
+                'is_complete' => false
+            ];
+        })->create();
+        $response = $this->get('/api/v1/tasks/incomplete');
+        $response->assertStatus(200);
+        $data = $response->json();
+        foreach ($data['data'] as $task) {
+            $this->assertFalse($task['is_complete']);
+        }
+    }
+
 
 }

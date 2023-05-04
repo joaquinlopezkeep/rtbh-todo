@@ -14,12 +14,11 @@ use App\Http\Controllers\TaskController;
 |
 */
 
-Route::prefix('v1/tasks')->group(function (){
-    Route::get('', [TaskController::class, 'index']);
-    Route::post('', [TaskController::class, 'store']);
-    Route::get('/{id}', [TaskController::class, 'show']);
-    Route::patch('/{id}', [TaskController::class, 'update']);
-    Route::delete('/{id}', [TaskController::class, 'destroy']);
+Route::prefix('v1')->group(function (){
+    Route::get('/tasks/complete', [TaskController::class, 'complete']);
+    Route::get('/tasks/incomplete', [TaskController::class,'incomplete']);
+    //The Routes above have to come first.
+    Route::apiResource('/tasks', TaskController::class);
 });
 
 

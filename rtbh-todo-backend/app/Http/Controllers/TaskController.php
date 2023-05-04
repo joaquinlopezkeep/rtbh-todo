@@ -90,4 +90,20 @@ class TaskController extends Controller
             return response()->json(['message' => $e->getMessage()], 404);
         }
     }
+
+    /**
+     * Displays tasks where is_complete is true with pagination.
+     */
+    public function complete()
+    {
+        return Task::where("is_complete", true)->paginate(15);
+    }
+
+    /**
+     * Displays tasks where is_complete is false with pagination.
+     */
+    public function incomplete()
+    {
+        return Task::where("is_complete", false)->paginate(15);
+    }
 }
