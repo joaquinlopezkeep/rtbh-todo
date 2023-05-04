@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Exception;
 
 class TaskController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the tasks.
      */
     public function index()
     {
@@ -16,11 +17,20 @@ class TaskController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created task in storage.
      */
     public function store(Request $request)
     {
-        //
+        try {
+            if(!$request->description){
+                throw new Exception("The description field is required.");
+            }
+            $task = Task::create([
+                'description' => $request->description,
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     /**
