@@ -27,6 +27,19 @@ class TaskApiTest extends TestCase
         $this->assertDatabaseHas('tasks', $data);
     }
 
+    public function test_store_two_tasks_with_same_payload()
+    {
+        $data = [
+            'description' => 'Duplicate',
+        ];
+        $response = $this->post('/api/v1/tasks', $data);
+        $response2 = $this->post('/api/v1/tasks', $data);
+        $response->assertStatus(200);
+        $response2->assertStatus(200);
+        $tasks = Task::where('description', 'Duplicate')->get();
+        $this->assertCount(2, $tasks);
+    }
+
     public function test_store_task_with_invalid_payload()
     {
         $data = [
@@ -143,6 +156,24 @@ class TaskApiTest extends TestCase
         foreach ($data['data'] as $task) {
             $this->assertFalse($task['is_complete']);
         }
+    }
+
+    public function test_store_task_then_delete_then_add_again()
+    {
+        $data = [
+            'description' => 'This task will be added again.'
+        ];
+        $post_response = $this->post('/api/v1/tasks', $data);
+        $post_response->assertStatus(200);
+        $task = Task::where('description', 'This task will be added again.')->get();
+        $this->assertCount(1, $task);
+        $task_id = $task[0]->id;
+        $delete_response = $this->delete("/api/v1/tasks/{$task_id}");
+        $delete_response->assertStatus(200);
+        $this->assertDatabaseMissing('tasks', $data);
+        $post_response = $this->post('/api/v1/tasks', $data);
+        $post_response->assertStatus(200);
+        $this->assertDatabaseHas('tasks', $data);
     }
 
 
