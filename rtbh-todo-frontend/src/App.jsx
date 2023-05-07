@@ -3,7 +3,6 @@ import { NewTaskForm, TaskList } from './components/index';
 
 function App() {
     const [hasNewTask, setHasNewTask] = useState(false);
-    console.log('The App re renders...');
     return (
         <>
             <header className='h-[50px] bg-[#0d0d0d] flex flex-row justify-center content-center'>

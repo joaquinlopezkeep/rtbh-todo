@@ -4,7 +4,6 @@ import api from '../../api/post';
 
 export const NewTaskForm = ({ hasNewTask, setHasNewTask }) => {
     const [inputTask, setInputTask] = useState('');
-    console.log('The task form re renders...');
 
     const storeNewTask = async (event) => {
         event.preventDefault();
@@ -23,6 +22,7 @@ export const NewTaskForm = ({ hasNewTask, setHasNewTask }) => {
             console.log('the headers: ', error.response.headers);
         }
     };
+
     return (
         <form onSubmit={storeNewTask} className='flex flex-row justify-center'>
             <label

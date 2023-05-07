@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ReactComponent as DeleteIcon } from '../../assets/svg/delete.svg';
 import api from '../../api/post';
 
-export const TaskList = ({ hasNewTask, setHasNewTask }) => {
+export const TaskList = ({ hasNewTask }) => {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -31,7 +31,7 @@ export const TaskList = ({ hasNewTask, setHasNewTask }) => {
                 is_complete: !task.is_complete,
             };
             const response = await api.patch(`/tasks/${task.id}}`, data);
-            //map through the tasks and set the status in task state.
+            // set the is_complete status of task changed.
             setTasks((prev) => {
                 return prev.map((tsk) => {
                     if (tsk.id === task.id) {
@@ -49,12 +49,10 @@ export const TaskList = ({ hasNewTask, setHasNewTask }) => {
     };
 
     useEffect(() => {
-        console.log('will get all the tasks again...');
         const getTasks = async () => {
             try {
                 setLoading(true);
                 const response = await api.get('/tasks');
-                // console.table(response.data);
                 setTasks(response.data);
             } catch (error) {
                 console.log('Error in the getTasks: ', error.response.data);
@@ -81,7 +79,7 @@ export const TaskList = ({ hasNewTask, setHasNewTask }) => {
                     <li
                         key={task.id}
                         className='text-[2.4rem] font-normal text-[#0d0d0d] mb-[1.2rem] '>
-                        <div className='flex flex-row justify-between gap-[.8rem] bg-[#D9D9D9] rounded-md px-[2.4rem] py-[1rem]'>
+                        <div className='flex flex-row justify-between  gap-[.8rem] bg-[#D9D9D9] rounded-md px-[2.4rem] py-[1rem]'>
                             <div className='form-control pt-3'>
                                 <input
                                     type='checkbox'
@@ -92,7 +90,9 @@ export const TaskList = ({ hasNewTask, setHasNewTask }) => {
                                 />
                             </div>
                             {!task.is_complete && (
-                                <p className=''>{task.description}</p>
+                                <p className='justify-self-start'>
+                                    {task.description}
+                                </p>
                             )}
                             {task.is_complete && (
                                 <p className='line-through'>
