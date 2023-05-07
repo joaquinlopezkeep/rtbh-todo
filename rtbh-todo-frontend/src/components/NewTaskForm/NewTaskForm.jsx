@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
 import { ReactComponent as AddIcon } from '../../assets/svg/add.svg';
-import { API_URL } from '../../utils/api';
+import api from '../../api/post';
 
-export const NewTaskForm = () => {
+export const NewTaskForm = ({ hasNewTask, setHasNewTask }) => {
     const [inputTask, setInputTask] = useState('');
+    console.log('The task form re renders...');
 
-    const storeNewTask = async () => {
+    const storeNewTask = async (event) => {
+        event.preventDefault();
         try {
             const data = {
                 description: inputTask,
             };
-            const response = await fetch(`${API_URL}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-            setInputTask('');
+            const response = await api.post('/tasks', data);
+            if (response.status === 200) {
+                setInputTask('');
+                setHasNewTask(!hasNewTask);
+            }
         } catch (error) {
-            console.error(error);
+            console.log('Error in the getTasks: ', error.response.data);
+            console.log('the status: ', error.response.status);
+            console.log('the headers: ', error.response.headers);
         }
     };
     return (
@@ -34,7 +35,7 @@ export const NewTaskForm = () => {
                     value={inputTask}
                     onChange={(event) => setInputTask(event.target.value)}
                     placeholder='Empty the dishwasher...'
-                    className='border border-[#D9D9D9] p-[.4rem] ml-[1.6rem] placeholder:text-[#D9D9D9] placeholder:pl-[.6rem] rounded-[.8rem] font-normal placeholder:font-thin'
+                    className='border border-[#D9D9D9] p-[.4rem] ml-[1.6rem] placeholder:text-[#D9D9D9] rounded-[.8rem] font-normal placeholder:font-thin'
                 />
             </label>
             <button

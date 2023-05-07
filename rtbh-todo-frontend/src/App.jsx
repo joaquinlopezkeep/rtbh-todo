@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import { NewTaskForm, TaskList } from './components/index';
 
 function App() {
+    const [hasNewTask, setHasNewTask] = useState(false);
+    console.log('The App re renders...');
     return (
         <>
             <header className='h-[50px] bg-[#0d0d0d] flex flex-row justify-center content-center'>
@@ -13,8 +16,11 @@ function App() {
                     <h2 className='text-center font-semibold my-[2.4rem] text-[3.2rem]'>
                         Tasks
                     </h2>
-                    <NewTaskForm />
-                    <TaskList />
+                    <NewTaskForm
+                        hasNewTask={hasNewTask}
+                        setHasNewTask={setHasNewTask}
+                    />
+                    <TaskList hasNewTask={hasNewTask} />
                 </section>
             </main>
         </>
