@@ -24,25 +24,26 @@ export const NewTaskForm = ({ hasNewTask, setHasNewTask }) => {
     };
 
     return (
-        <form onSubmit={storeNewTask} className='flex flex-row justify-center'>
+        <form
+            onSubmit={storeNewTask}
+            className='flex flex-row justify-between gap-[.8rem] my-[1.6rem]'>
             <label
                 htmlFor='newTask'
-                className='font-medium text-[2.4rem] mr-[1.6rem] text-[#0d0d0d] '>
-                Add Task:
+                className='font-medium text-[2rem] text-[#0d0d0d] md:grow'>
                 <input
                     name='newTask'
                     type='text'
                     value={inputTask}
                     onChange={(event) => setInputTask(event.target.value)}
-                    placeholder='Empty the dishwasher...'
-                    className='border border-[#D9D9D9] p-[.4rem] ml-[1.6rem] placeholder:text-[#D9D9D9] rounded-[.8rem] font-normal placeholder:font-thin'
+                    placeholder='Add a task....'
+                    className='border border-[#D9D9D9] placeholder:text-[#D9D9D9] rounded-[.8rem] font-normal placeholder:font-thin p-[.8rem] w-full'
                 />
             </label>
             <button
                 type='submit'
                 disabled={!inputTask}
                 className='bg-[#2EF273] rounded-full cursor-pointer disabled:cursor-not-allowed drop-shadow-xl active:drop-shadow-md'>
-                <AddIcon className='fill-white' />
+                <AddIcon className='fill-white h-[2.4rem]' />
             </button>
         </form>
     );

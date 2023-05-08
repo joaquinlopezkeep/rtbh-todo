@@ -96,21 +96,24 @@ export const TaskList = ({ hasNewTask }) => {
                 <p className='mt-[2.4rem] m-auto text-[2.4rem]'>Loading...</p>
             )}
             {error && (
-                <p className='mt-[2.4rem] m-auto text-[2.4rem]'>{error}</p>
+                <p className='mt-[2.4rem] m-auto text-[2.4rem] text-red-500'>
+                    {error}
+                </p>
             )}
-            <ul className='mt-[2.4rem] m-auto '>
+            <ul className='flex flex-col justify-center gap-[1.2rem]'>
                 {tasks.map((task) => (
                     <li
                         key={task.id}
-                        className='text-[2.4rem] font-normal text-[#0d0d0d] mb-[1.2rem] '>
-                        <div className='flex flex-row justify-between  gap-[.8rem] bg-[#D9D9D9] rounded-md px-[2.4rem] py-[1rem]'>
-                            <div className='form-control pt-3'>
+                        className='text-[1.6rem] font-normal text-[#0d0d0d]'>
+                        <div className='flex flex-row justify-between gap-[.8rem] bg-[#D9D9D9] rounded-[.8rem] p-[1.6rem]'>
+                            <div className='form-control'>
                                 <input
                                     type='checkbox'
                                     checked={task.is_complete}
                                     onChange={() =>
                                         changeTaskCompleteHandler(task)
                                     }
+                                    className='self-center'
                                 />
                             </div>
                             {!task.is_complete && (
@@ -131,19 +134,19 @@ export const TaskList = ({ hasNewTask }) => {
                                     onBlur={() =>
                                         changeTaskDescriptionHandler(task)
                                     }
-                                    className='bg-[#d9d9d9]'
+                                    className='bg-[#d9d9d9] overflow-x-auto p-[.8rem] md:grow'
                                 />
                             )}
                             {task.is_complete && (
-                                <p className='line-through'>
+                                <span className='line-through whitespace-nowrap overflow-x-auto w-[16.8rem] p-[.8rem] md:grow'>
                                     {task.description}
-                                </p>
+                                </span>
                             )}
 
                             <button
                                 type='button'
                                 onClick={() => deleteTaskHandler(task.id)}
-                                className='bg-white rounded-md hover:bg-red-600 group'>
+                                className='bg-white rounded-full hover:bg-red-600 group'>
                                 <DeleteIcon className='h-[2.4rem] fill-red-600 group-hover:fill-white cursor-pointer' />
                             </button>
                         </div>
