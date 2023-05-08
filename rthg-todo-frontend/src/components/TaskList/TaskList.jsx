@@ -104,7 +104,7 @@ export const TaskList = ({ hasNewTask }) => {
                 {tasks.map((task) => (
                     <li
                         key={task.id}
-                        className='text-[1.6rem] font-normal text-[#0d0d0d]'>
+                        className='text-[1.6rem] lg:text-[2rem] font-normal text-[#0d0d0d]'>
                         <div className='flex flex-row justify-between gap-[.8rem] bg-[#D9D9D9] rounded-[.8rem] p-[1.6rem]'>
                             <div className='form-control'>
                                 <input
