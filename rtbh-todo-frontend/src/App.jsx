@@ -7,7 +7,7 @@ function App() {
         <div className='flex flex-col h-screen'>
             <header className='h-[6.4rem] bg-[#0d0d0d] flex flex-row justify-center'>
                 <p className='text-white text-[2.4rem] self-center'>
-                    RTBH TODO APP
+                    RTHG TODO APP
                 </p>
             </header>
             <main className='grid grid-cols-8 bg-slate-300 grow'>
