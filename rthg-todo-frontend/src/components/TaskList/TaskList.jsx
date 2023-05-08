@@ -55,20 +55,24 @@ export const TaskList = ({ hasNewTask }) => {
     };
 
     const changeTaskDescriptionHandler = async (task) => {
-        try {
-            const data = {
-                description: task.description,
-                is_complete: task.is_complete,
-            };
-            const response = await api.patch(`/tasks/${task.id}}`, data);
-        } catch (error) {
-            console.log(
-                'Error in the changeTaskDescriptionHandler: ',
-                error.response.data
-            );
-            console.log('the status: ', error.response.status);
-            console.log('the headers: ', error.response.headers);
-            setError(error.response.data.message);
+        if (task.description) {
+            try {
+                const data = {
+                    description: task.description,
+                    is_complete: task.is_complete,
+                };
+                const response = await api.patch(`/tasks/${task.id}}`, data);
+            } catch (error) {
+                console.log(
+                    'Error in the changeTaskDescriptionHandler: ',
+                    error.response.data
+                );
+                console.log('the status: ', error.response.status);
+                console.log('the headers: ', error.response.headers);
+                setError(error.response.data.message);
+            }
+        } else {
+            setError('Description cannot be empty!');
         }
     };
 
@@ -93,10 +97,12 @@ export const TaskList = ({ hasNewTask }) => {
     return (
         <>
             {loading && (
-                <p className='mt-[2.4rem] m-auto text-[2.4rem]'>Loading...</p>
+                <p className='mt-[2.4rem] m-auto text-[1.6rem] lg:text-[2rem]'>
+                    Loading...
+                </p>
             )}
             {error && (
-                <p className='mt-[2.4rem] m-auto text-[2.4rem] text-red-500'>
+                <p className='mt-[2.4rem] m-auto text-[1.6rem] lg:text-[2rem] text-red-500'>
                     {error}
                 </p>
             )}
@@ -120,8 +126,9 @@ export const TaskList = ({ hasNewTask }) => {
                                 <input
                                     type='text'
                                     value={task.description}
-                                    onChange={(event) =>
-                                        setTasks((prev) =>
+                                    onChange={(event) => {
+                                        setError(false);
+                                        return setTasks((prev) =>
                                             prev.map((tsk) => {
                                                 if (tsk.id === task.id) {
                                                     tsk.description =
@@ -129,8 +136,8 @@ export const TaskList = ({ hasNewTask }) => {
                                                 }
                                                 return tsk;
                                             })
-                                        )
-                                    }
+                                        );
+                                    }}
                                     onBlur={() =>
                                         changeTaskDescriptionHandler(task)
                                     }
