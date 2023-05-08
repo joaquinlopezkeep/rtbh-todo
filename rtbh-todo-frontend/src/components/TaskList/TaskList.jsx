@@ -16,7 +16,10 @@ export const TaskList = ({ hasNewTask }) => {
                 });
             }
         } catch (error) {
-            console.log('Error in the getTasks: ', error.response.data);
+            console.log(
+                'Error in the deleteTaskHandler: ',
+                error.response.data
+            );
             console.log('the status: ', error.response.status);
             console.log('the headers: ', error.response.headers);
             setError(error.response.data.message);
@@ -41,7 +44,28 @@ export const TaskList = ({ hasNewTask }) => {
                 });
             });
         } catch (error) {
-            console.log('Error in the getTasks: ', error.response.data);
+            console.log(
+                'Error in the changeTaskCompleteHandler: ',
+                error.response.data
+            );
+            console.log('the status: ', error.response.status);
+            console.log('the headers: ', error.response.headers);
+            setError(error.response.data.message);
+        }
+    };
+
+    const changeTaskDescriptionHandler = async (task) => {
+        try {
+            const data = {
+                description: task.description,
+                is_complete: task.is_complete,
+            };
+            const response = await api.patch(`/tasks/${task.id}}`, data);
+        } catch (error) {
+            console.log(
+                'Error in the changeTaskDescriptionHandler: ',
+                error.response.data
+            );
             console.log('the status: ', error.response.status);
             console.log('the headers: ', error.response.headers);
             setError(error.response.data.message);
@@ -90,9 +114,25 @@ export const TaskList = ({ hasNewTask }) => {
                                 />
                             </div>
                             {!task.is_complete && (
-                                <p className='justify-self-start'>
-                                    {task.description}
-                                </p>
+                                <input
+                                    type='text'
+                                    value={task.description}
+                                    onChange={(event) =>
+                                        setTasks((prev) =>
+                                            prev.map((tsk) => {
+                                                if (tsk.id === task.id) {
+                                                    tsk.description =
+                                                        event.target.value;
+                                                }
+                                                return tsk;
+                                            })
+                                        )
+                                    }
+                                    onBlur={() =>
+                                        changeTaskDescriptionHandler(task)
+                                    }
+                                    className='bg-[#d9d9d9]'
+                                />
                             )}
                             {task.is_complete && (
                                 <p className='line-through'>
