@@ -25,8 +25,8 @@ function App() {
                 </section>
             </main>
             <footer className='h-[6.4rem] bg-[#0d0d0d] flex flex-row justify-center'>
-                <p className='text-white text-[2.4rem] self-center'>
-                    RTBH TODO APP
+                <p className='text-white text-[2.4rem] self-center font-light'>
+                    Copyright &copy; 2023
                 </p>
             </footer>
         </div>
