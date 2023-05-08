@@ -21,7 +21,7 @@ Requirements:
 
 alternatively instead of downloading PHP, Mariadb and Apache independently you can use [XAMPP](https://www.apachefriends.org/).
 
-Once your system meets the requirements using the example.env create a .env file and input your database name, user and password. Ensure your Apache and database is running, create the database and optionally a user and password.
+Once your system meets the requirements using the .env.example create a .env file and input your database name, user and password. Ensure your Apache and database is running, create the database and optionally a user and password.
 
 Navigate to rthg-todo-backend and run
 
