@@ -40,6 +40,18 @@ class TaskApiTest extends TestCase
         $this->assertCount(2, $tasks);
     }
 
+    public function test_store_task_with_empty_description()
+    {
+        $data = [
+            'description' => '',
+        ];
+        $response = $this->post('/api/v1/tasks', $data);
+        $response->assertStatus(400)
+                ->assertExactJson([
+                    'message' => 'The description field is required.'
+                ]);
+    }
+
     public function test_store_task_with_invalid_payload()
     {
         $data = [
@@ -84,6 +96,22 @@ class TaskApiTest extends TestCase
         $updatedTask = Task::find($task_id);
         $this->assertEquals($data['description'], $updatedTask->description);
         $this->assertEquals($data['is_complete'], $updatedTask->is_complete);
+    }
+
+    public function test_update_task_with_valid_id_and_empty_description()
+    {
+        $data = [
+            'description' => '',
+            'is_complete' => true
+        ];
+        $task = Task::factory()->create();
+        $task_id = $task->id;
+        $response = $this->patch("/api/v1/tasks/{$task_id}", $data);
+        $response->assertStatus(400)
+        ->assertExactJson([
+            'message' => 'The description field is required.'
+        ]);
+
     }
 
     public function test_update_task_with_invalid_id()

@@ -55,24 +55,20 @@ export const TaskList = ({ hasNewTask }) => {
     };
 
     const changeTaskDescriptionHandler = async (task) => {
-        if (task.description) {
-            try {
-                const data = {
-                    description: task.description,
-                    is_complete: task.is_complete,
-                };
-                const response = await api.patch(`/tasks/${task.id}}`, data);
-            } catch (error) {
-                console.log(
-                    'Error in the changeTaskDescriptionHandler: ',
-                    error.response.data
-                );
-                console.log('the status: ', error.response.status);
-                console.log('the headers: ', error.response.headers);
-                setError(error.response.data.message);
-            }
-        } else {
-            setError('Description cannot be empty!');
+        try {
+            const data = {
+                description: task.description,
+                is_complete: task.is_complete,
+            };
+            const response = await api.patch(`/tasks/${task.id}}`, data);
+        } catch (error) {
+            console.log(
+                'Error in the changeTaskDescriptionHandler: ',
+                error.response.data
+            );
+            console.log('the status: ', error.response.status);
+            console.log('the headers: ', error.response.headers);
+            setError(error.response.data.message);
         }
     };
 

@@ -54,7 +54,7 @@ class TaskController extends Controller
     public function update(Request $request, string $id)
     {
         try{
-            if ($request->has('description') && $request->has('is_complete')) {
+            if ($request->description && $request->has('is_complete')) {
                 $is_complete = $request->is_complete;
                 if (is_bool($is_complete) || ($is_complete === '0' || $is_complete === '1')) {
                     $task = Task::findOrFail($id);
@@ -65,7 +65,17 @@ class TaskController extends Controller
                     throw new Exception('The is_complete field must be true or false or 1 or 0.');
                 }
             } else {
-                throw new Exception('The description and is_complete fields are required.');
+                $message = '';
+                if(!$request->description && !$request->has('is_complete')){
+                    $message = 'description and is_complete fields are';
+                }
+                else if (!$request->description) {
+                    $message = 'description field is';
+                }
+                else{
+                    $message = 'is_complete field is';
+                }
+                throw new Exception("The {$message} required.");
             }
         }
         catch(ModelNotFoundException $e){
