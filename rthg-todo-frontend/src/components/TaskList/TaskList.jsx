@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ReactComponent as DeleteIcon } from '../../assets/svg/delete.svg';
 import api from '../../api/post';
 
-export const TaskList = ({ hasNewTask }) => {
-    const [tasks, setTasks] = useState([]);
+export const TaskList = ({ tasks, setTasks, error, setError }) => {
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
 
     const deleteTaskHandler = async (id) => {
         try {
@@ -88,7 +86,7 @@ export const TaskList = ({ hasNewTask }) => {
             }
         };
         getTasks();
-    }, [hasNewTask]);
+    }, []);
 
     return (
         <>

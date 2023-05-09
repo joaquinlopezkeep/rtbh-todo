@@ -22,6 +22,7 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
+        sleep(1);
         try {
             if(!$request->description){
                 throw new Exception("The description field is required.");
@@ -29,6 +30,7 @@ class TaskController extends Controller
             $task = Task::create([
                 'description' => $request->description,
             ]);
+            return $task;
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }

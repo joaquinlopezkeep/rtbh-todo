@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { NewTaskForm, TaskList } from './components/index';
 
 function App() {
-    const [hasNewTask, setHasNewTask] = useState(false);
+    const [tasks, setTasks] = useState([]);
+    const [error, setError] = useState('');
+
     return (
         <div className='flex flex-col h-screen'>
             <header className='h-[6.4rem] bg-[#0d0d0d] flex flex-row justify-center'>
@@ -17,11 +19,13 @@ function App() {
                     <h2 className='text-center font-semibold my-[1.6rem] text-[3.2rem]'>
                         Tasks
                     </h2>
-                    <TaskList hasNewTask={hasNewTask} />
-                    <NewTaskForm
-                        hasNewTask={hasNewTask}
-                        setHasNewTask={setHasNewTask}
+                    <TaskList
+                        tasks={tasks}
+                        setTasks={setTasks}
+                        error={error}
+                        setError={setError}
                     />
+                    <NewTaskForm setTasks={setTasks} setError={setError} />
                 </section>
             </main>
             <footer className='h-[6.4rem] bg-[#0d0d0d] flex flex-row justify-center'>
