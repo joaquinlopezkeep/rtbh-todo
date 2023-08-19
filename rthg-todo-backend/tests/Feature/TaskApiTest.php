@@ -4,17 +4,25 @@ namespace Tests\Feature;
 
 use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class TaskApiTest extends TestCase
 {
     use RefreshDatabase;
 
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->withHeaders([
+            'Accept' => 'application/json'
+        ]);
+    }
+
     public function test_get_all_tasks_status()
     {
-        $response = $this->get('/api/v1/tasks');
-        $response->assertStatus(200);
+        $this->get('/api/v1/tasks')->assertSuccessful();
     }
 
     public function test_store_task_with_valid_payload()
@@ -22,8 +30,8 @@ class TaskApiTest extends TestCase
         $data = [
             'description' => 'Task 1',
         ];
-        $response = $this->post('/api/v1/tasks', $data);
-        $response->assertStatus(200);
+        $this->post('/api/v1/tasks', $data)
+            ->assertStatus(200);
         $this->assertDatabaseHas('tasks', $data);
     }
 
@@ -32,10 +40,8 @@ class TaskApiTest extends TestCase
         $data = [
             'description' => 'Duplicate',
         ];
-        $response = $this->post('/api/v1/tasks', $data);
-        $response2 = $this->post('/api/v1/tasks', $data);
-        $response->assertStatus(200);
-        $response2->assertStatus(200);
+        $this->post('/api/v1/tasks', $data)->assertSuccessful();
+        $this->post('/api/v1/tasks', $data)->assertSuccessful();
         $tasks = Task::where('description', 'Duplicate')->get();
         $this->assertCount(2, $tasks);
     }
@@ -45,11 +51,7 @@ class TaskApiTest extends TestCase
         $data = [
             'description' => '',
         ];
-        $response = $this->post('/api/v1/tasks', $data);
-        $response->assertStatus(400)
-                ->assertExactJson([
-                    'message' => 'The description field is required.'
-                ]);
+        $this->post('/api/v1/tasks', $data)->assertUnprocessable();
     }
 
     public function test_store_task_with_invalid_payload()
@@ -57,30 +59,24 @@ class TaskApiTest extends TestCase
         $data = [
             'bad_field' => 'Task 1',
         ];
-        $response = $this->post('/api/v1/tasks', $data);
-        $response->assertStatus(400)
-                ->assertExactJson([
-                    'message' => 'The description field is required.'
-                ]);
+        $this->post('/api/v1/tasks', $data)->assertUnprocessable();
     }
 
     public function test_get_specific_task_with_valid_id()
     {
         $task = Task::factory()->create();
         $task_id = $task->id;
-        $response = $this->get("/api/v1/tasks/{$task_id}");
-        $response->assertStatus(200)
-                ->assertJson([
-                    'id' => $task_id
-                ]);
+        $this->get("/api/v1/tasks/{$task_id}")->assertSuccessful()
+            ->assertJson([
+                'id' => $task_id
+            ]);
     }
 
     public function test_get_specific_task_with_invalid_id()
     {
         $task = Task::factory()->create();
         $task_id = $task->id  + 100;
-        $response = $this->get("/api/v1/tasks/{$task_id}");
-        $response->assertStatus(404);
+        $this->get("/api/v1/tasks/{$task_id}")->assertNotFound();
     }
 
     public function test_update_task_with_valid_id()
@@ -91,8 +87,7 @@ class TaskApiTest extends TestCase
         ];
         $task = Task::factory()->create();
         $task_id = $task->id;
-        $response = $this->patch("/api/v1/tasks/{$task_id}", $data);
-        $response->assertStatus(200);
+        $this->patch("/api/v1/tasks/{$task_id}", $data)->assertSuccessful();
         $updatedTask = Task::find($task_id);
         $this->assertEquals($data['description'], $updatedTask->description);
         $this->assertEquals($data['is_complete'], $updatedTask->is_complete);
@@ -106,12 +101,7 @@ class TaskApiTest extends TestCase
         ];
         $task = Task::factory()->create();
         $task_id = $task->id;
-        $response = $this->patch("/api/v1/tasks/{$task_id}", $data);
-        $response->assertStatus(400)
-        ->assertExactJson([
-            'message' => 'The description field is required.'
-        ]);
-
+        $this->patch("/api/v1/tasks/{$task_id}", $data)->assertUnprocessable();
     }
 
     public function test_update_task_with_invalid_id()
@@ -122,8 +112,7 @@ class TaskApiTest extends TestCase
         ];
         $task = Task::factory()->create();
         $task_id = $task->id  + 100;
-        $response = $this->patch("/api/v1/tasks/{$task_id}", $data);
-        $response->assertStatus(404);
+        $this->patch("/api/v1/tasks/{$task_id}", $data)->assertNotFound();
     }
 
     public function test_update_task_with_invalid_payload()
@@ -134,8 +123,7 @@ class TaskApiTest extends TestCase
         ];
         $task = Task::factory()->create();
         $task_id = $task->id;
-        $response = $this->patch("/api/v1/tasks/{$task_id}", $data);
-        $response->assertStatus(400);
+        $this->patch("/api/v1/tasks/{$task_id}", $data)->assertUnprocessable();
         $updatedTask = Task::find($task_id);
         $this->assertNotEquals($data['title'], $updatedTask->description);
     }
@@ -144,8 +132,7 @@ class TaskApiTest extends TestCase
     {
         $task = Task::factory()->create();
         $task_id = $task->id;
-        $response = $this->delete("/api/v1/tasks/{$task_id}");
-        $response->assertStatus(200);
+        $this->delete("/api/v1/tasks/{$task_id}")->assertSuccessful();
         $this->assertDatabaseMissing('tasks', ['id' => $task_id]);
     }
 
@@ -153,33 +140,32 @@ class TaskApiTest extends TestCase
     {
         $task = Task::factory()->create();
         $task_id = $task->id + 100;
-        $response = $this->delete("/api/v1/tasks/{$task_id}");
-        $response->assertStatus(404);
+        $this->delete("/api/v1/tasks/{$task_id}")->assertNotFound();
         $this->assertDatabaseHas('tasks', ['id' => $task->id]);
     }
 
-    public function test_get_all_complete_tasks(){
-        $tasks = Task::factory()->count(10)->state(function (array $attributes){
+    public function test_get_all_complete_tasks()
+    {
+        Task::factory()->count(10)->state(function () {
             return [
                 'is_complete' => true
             ];
         })->create();
         $response = $this->get('/api/v1/tasks/complete');
-        $response->assertStatus(200);
         $data = $response->json();
         foreach ($data['data'] as $task) {
             $this->assertTrue($task['is_complete']);
         }
     }
 
-    public function test_get_all_incomplete_tasks(){
-        $tasks = Task::factory()->count(10)->state(function (array $attributes){
+    public function test_get_all_incomplete_tasks()
+    {
+        Task::factory()->count(10)->state(function () {
             return [
                 'is_complete' => false
             ];
         })->create();
         $response = $this->get('/api/v1/tasks/incomplete');
-        $response->assertStatus(200);
         $data = $response->json();
         foreach ($data['data'] as $task) {
             $this->assertFalse($task['is_complete']);
@@ -191,16 +177,13 @@ class TaskApiTest extends TestCase
         $data = [
             'description' => 'This task will be added again.'
         ];
-        $post_response = $this->post('/api/v1/tasks', $data);
-        $post_response->assertStatus(200);
+        $this->post('/api/v1/tasks', $data)->assertSuccessful();
         $task = Task::where('description', 'This task will be added again.')->get();
         $this->assertCount(1, $task);
         $task_id = $task[0]->id;
-        $delete_response = $this->delete("/api/v1/tasks/{$task_id}");
-        $delete_response->assertStatus(200);
+        $this->delete("/api/v1/tasks/{$task_id}")->assertSuccessful();
         $this->assertDatabaseMissing('tasks', $data);
-        $post_response = $this->post('/api/v1/tasks', $data);
-        $post_response->assertStatus(200);
+        $this->post('/api/v1/tasks', $data)->assertSuccessful();
         $this->assertDatabaseHas('tasks', $data);
     }
 }
