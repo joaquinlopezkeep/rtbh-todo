@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ReactComponent as AddIcon } from '../../assets/svg/add.svg';
 import api from '../../api/post';
 
-export const NewTaskForm = ({ hasNewTask, setHasNewTask }) => {
+export const NewTaskForm = ({ hasNewTask, setHasNewTask, setError }) => {
     const [inputTask, setInputTask] = useState('');
 
     const storeNewTask = async (event) => {
@@ -20,6 +20,7 @@ export const NewTaskForm = ({ hasNewTask, setHasNewTask }) => {
             console.log('Error in the getTasks: ', error.response.data);
             console.log('the status: ', error.response.status);
             console.log('the headers: ', error.response.headers);
+            setError(error.response.data.message);
         }
     };
 
