@@ -21,17 +21,19 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            "description" => ['required', 'string']
+            "description" => ['required', 'string'],
+            "task_list_id" => ['required', 'numeric']
         ]);
 
         $task = Task::create([
             'description' => $data["description"],
+            'task__list_id' => $data["task_list_id"]
         ]);
 
         $task->save();
     }
 
-    /**
+    /**¯
      * Display the specified task.
      */
     public function show(string $id)
