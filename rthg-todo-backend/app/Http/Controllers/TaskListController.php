@@ -27,7 +27,6 @@ class TaskListController extends Controller
         $taskList = new TaskList($data["title"]);
 
         $taskList->save();
-
     }
 
 
